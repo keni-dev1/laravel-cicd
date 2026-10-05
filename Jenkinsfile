@@ -8,9 +8,9 @@ pipeline {
             }
         }
 
-        stage('List files') {
+        stage('Gitleaks') {
             steps {
-                sh 'ls -la'
+                sh 'gitleaks detect --source . --no-banner --redact --exit-code 1'
             }
         }
     }
