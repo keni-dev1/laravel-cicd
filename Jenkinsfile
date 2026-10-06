@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool 'sonar-scanner'
+        IMAGE_NAME = 'laravel-cicd'
     }
 
     stages {
@@ -30,6 +31,12 @@ pipeline {
             steps {
                 sh 'trivy fs --scanners vuln --severity HIGH,CRITICAL --exit-code 0 .'
                 sh 'trivy fs --scanners vuln --severity CRITICAL --exit-code 1 .'
+            }
+        }
+
+        stage('Docker build') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
     }
