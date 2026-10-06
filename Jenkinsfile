@@ -25,5 +25,12 @@ pipeline {
                 }
             }
         }
+
+        stage('Trivy files') {
+            steps {
+                sh 'trivy fs --scanners vuln --severity HIGH,CRITICAL --exit-code 0 .'
+                sh 'trivy fs --scanners vuln --severity CRITICAL --exit-code 1 .'
+            }
+        }
     }
 }
