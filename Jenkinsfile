@@ -39,5 +39,12 @@ pipeline {
                 sh 'docker build -t $IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
+
+        stage('Trivy image') {
+            steps {
+                sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 $IMAGE_NAME:$BUILD_NUMBER'
+                sh 'trivy image --severity CRITICAL --ignore-unfixed --exit-code 1 $IMAGE_NAME:$BUILD_NUMBER'
+            }
+        }
     }
 }
