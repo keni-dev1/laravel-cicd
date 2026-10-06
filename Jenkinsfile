@@ -48,5 +48,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Hub push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials',
+                                                  usernameVariable: 'DH_USER',
+                                                  passwordVariable: 'DH_PASS')]) {
+                    sh 'echo "$DH_PASS" | docker login -u "$DH_USER" --password-stdin'
+                    sh 'docker tag $IMAGE_NAME:$BUILD_NUMBER $DH_USER/$IMAGE_NAME:$BUILD_NUMBER'
+                    sh 'docker tag $IMAGE_NAME:$BUILD_NUMBER $DH_USER/$IMAGE_NAME:latest'
+                    sh 'docker push $DH_USER/$IMAGE_NAME:$BUILD_NUMBER'
+                    sh 'docker push $DH_USER/$IMAGE_NAME:latest'
+                    sh 'docker logout'
+                }
+            }
+        }
     }
 }
