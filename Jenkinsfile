@@ -43,7 +43,9 @@ pipeline {
         stage('Trivy image') {
             steps {
                 sh 'trivy image --severity HIGH,CRITICAL --exit-code 0 $IMAGE_NAME:$BUILD_NUMBER'
-                sh 'trivy image --severity CRITICAL --ignore-unfixed --exit-code 1 $IMAGE_NAME:$BUILD_NUMBER'
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'trivy image --severity CRITICAL --ignore-unfixed --exit-code 1 $IMAGE_NAME:$BUILD_NUMBER'
+                }
             }
         }
     }
